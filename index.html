@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Radial Composition</title>
+    
+    <style>
+        body {
+            margin: 0;
+            background-color: #000000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .canvas {
+            width: 90vmin;
+            height: 90vmin;
+            background-color: #FFFFFF;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            animation: slow-spin 120s linear infinite; /* Lassú, koncentrikus forgás hozzáadva */
+        }
+
+        /* A teljes kör forgatásáért felelős animáció */
+        @keyframes slow-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .element-wrapper {
+            position: absolute;
+            width: 16.5%; 
+            height: 50%; 
+            bottom: 50%; 
+            left: 41.75%; 
+            transform-origin: bottom center;
+            transition: z-index 0.4s;
+        }
+
+        /* Háttérbe küldött elemek */
+        .element-wrapper.background { z-index: -1; }
+        .element-wrapper:hover { z-index: 50; }
+        
+        .svg-container {
+            width: 100%;
+            height: auto;
+            position: absolute;
+            top: 0;
+            transform: rotate(180deg);
+        }
+
+        .wave-wrapper {
+            width: 100%;
+            height: auto;
+            transform-origin: bottom center;
+            animation: bubble-gum-wave 30s ease-in-out infinite alternate;
+        }
+
+        .svg-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transform-origin: bottom center;
+            transform: scale(var(--base-scale));
+            transition: transform 30s ease-in-out, filter 15s ease;
+        }
+
+        .element-wrapper:hover .svg-container img {
+            transform: scale(calc(var(--base-scale) + 0.12)); /* Erősebb nagyítás */
+            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.8));
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Még erőteljesebb, hullámzóbb animáció */
+        @keyframes bubble-gum-wave {
+            0% { transform: rotate(0deg) skew(0deg, 0deg) scale(1); }
+            25% { transform: rotate(15deg) skew(-10deg, 6deg) scale(1.15, 0.85); }
+            50% { transform: rotate(-12deg) skew(8deg, -5deg) scale(0.9, 1.15); }
+            75% { transform: rotate(10deg) skew(-6deg, 8deg) scale(1.1, 0.9); }
+            100% { transform: rotate(0deg) skew(0deg, 0deg) scale(1); }
+        }
+
+        /* 25 elem egyenletes elosztása */
+        .element-1 { transform: rotate(0deg); --base-scale: 0.75; }
+        .element-2 { transform: rotate(14.4deg); --base-scale: 0.95; }
+        .element-3 { transform: rotate(28.8deg); --base-scale: 0.82; }
+        .element-4 { transform: rotate(43.2deg); --base-scale: 0.88; }
+        .element-5 { transform: rotate(57.6deg); --base-scale: 0.91; }
+        .element-6 { transform: rotate(72deg); --base-scale: 0.78; }
+        .element-7 { transform: rotate(86.4deg); --base-scale: 0.85; }
+        .element-8 { transform: rotate(100.8deg); --base-scale: 0.92; }
+        .element-9 { transform: rotate(115.2deg); --base-scale: 0.80; }
+        .element-10 { transform: rotate(129.6deg); --base-scale: 0.89; }
+        .element-11 { transform: rotate(144deg); --base-scale: 0.94; }
+        .element-12 { transform: rotate(158.4deg); --base-scale: 0.76; }
+        .element-13 { transform: rotate(172.8deg); --base-scale: 0.83; }
+        .element-14 { transform: rotate(187.2deg); --base-scale: 0.90; }
+        .element-15 { transform: rotate(201.6deg); --base-scale: 0.87; }
+        .element-16 { transform: rotate(216deg); --base-scale: 0.93; }
+        .element-17 { transform: rotate(230.4deg); --base-scale: 0.79; }
+        .element-18 { transform: rotate(244.8deg); --base-scale: 0.86; }
+        .element-19 { transform: rotate(259.2deg); --base-scale: 0.91; }
+        .element-20 { transform: rotate(273.6deg); --base-scale: 0.84; }
+        .element-21 { transform: rotate(288deg); --base-scale: 0.77; }
+        .element-22 { transform: rotate(302.4deg); --base-scale: 0.96; }
+        .element-23 { transform: rotate(316.8deg); --base-scale: 0.81; }
+        .element-24 { transform: rotate(331.2deg); --base-scale: 0.88; }
+        .element-25 { transform: rotate(345.6deg); --base-scale: 0.90; }
+    </style>
+</head>
+<body>
+    <div class="canvas">
+        <!-- 25 virág, vegyes forrásfájlokkal -->
+        <div class="element-wrapper element-1"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-2 background"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-3"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
+        <div class="element-wrapper element-4 background"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
+        <div class="element-wrapper element-5"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-6 background"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-7"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-8 background"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-9"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
+        <div class="element-wrapper element-10 background"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
+        <div class="element-wrapper element-11"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-12 background"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-13"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-14 background"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-15"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
+        <div class="element-wrapper element-16"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
+        <div class="element-wrapper element-17"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-18"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-19"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-20"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-21"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
+        <div class="element-wrapper element-22"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
+        <div class="element-wrapper element-23"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-24"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-25"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
+    </div>
+</body>
+</html>
