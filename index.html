@@ -16,41 +16,50 @@
             min-height: 100vh;
         }
 
-        .canvas {
+        /* Az új, legalsó fehér háttér kör */
+        .base-circle {
+            position: absolute;
             width: 90vmin;
             height: 90vmin;
             background-color: #FFFFFF;
             border-radius: 50%;
+            z-index: -2; /* Fekete háttér felett, de minden virág mögött */
+        }
+
+        .canvas {
+            width: 90vmin;
+            height: 90vmin;
+            background-color: transparent; 
+            border-radius: 50%;
             position: relative;
             overflow: hidden;
-            animation: slow-spin 120s linear infinite; /* Lassú, koncentrikus forgás hozzáadva */
+            animation: slow-spin 120s linear infinite;
+            z-index: 1; 
+            pointer-events: none; 
         }
 
         /* Belső, láthatatlan kör beállításai */
         .inner-canvas {
             position: absolute;
-            width: 54vmin; /* A 90vmin pontosan 60%-a */
+            width: 54vmin;
             height: 54vmin;
             border-radius: 50%;
-            animation: slow-spin-reverse 180s linear infinite; /* Visszafelé forog, még lassabban (180mp) */
-            z-index: 20; /* A külső kör felett legyen */
-            pointer-events: none; /* Hogy a láthatatlan részek ne blokkolják az egeret a külső elemeknél */
+            animation: slow-spin 120s linear infinite;
+            z-index: -1; 
+            pointer-events: none;
         }
 
-        /* A belső kör elemeinek pozicionálása */
         .inner-canvas .element-wrapper {
-            width: 27.5%; /* Viszonylagosan nagyobb, hogy a fizikailag kisebb belső körön is ugyanakkora maradjon a virág */
-            left: 36.25%; /* Középre igazítás: (100% - 27.5%) / 2 */
-            pointer-events: auto; /* A virágok újra legyenek kattinthatóak/interaktívak */
+            width: 27.5%; 
+            left: 36.25%; 
+            pointer-events: auto;
         }
 
-        /* A teljes kör forgatásáért felelős animáció */
         @keyframes slow-spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* A belső kör inverz forgása */
         @keyframes slow-spin-reverse {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(-360deg); }
@@ -63,18 +72,21 @@
             bottom: 50%; 
             left: 41.75%; 
             transform-origin: bottom center;
-            transition: z-index 0.4s;
-            --size-factor: 1; /* Alapértelmezett méretszorzó */
+            /* 0.5s késleltetés a z-index elvesztésénél, így végig elöl marad a fade out alatt */
+            transition: z-index 0s 0.5s;
+            --size-factor: 1;
+            pointer-events: auto; 
         }
 
-        /* Az új, 10%-kal kisebb elemekhez */
-        .element-wrapper.extra-small {
-            --size-factor: 0.9;
-        }
-
-        /* Háttérbe küldött elemek */
+        .element-wrapper.extra-small { --size-factor: 0.9; }
+        .element-wrapper.double-size { --size-factor: 2; }
+        .element-wrapper.inner-small { --size-factor: 0.8; }
         .element-wrapper.background { z-index: -1; }
-        .element-wrapper:hover { z-index: 50; }
+
+        .element-wrapper:hover { 
+            z-index: 150; /* A 100-as popup elé kerüljön */
+            transition: z-index 0s 0s; /* Azonnal kapja meg az előteret */
+        }
         
         .svg-container {
             width: 100%;
@@ -101,12 +113,11 @@
         }
 
         .element-wrapper:hover .svg-container img {
-            transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.12)); /* Erősebb nagyítás */
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.12));
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.8));
             transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Még erőteljesebb, hullámzóbb animáció */
         @keyframes bubble-gum-wave {
             0% { transform: rotate(0deg) skew(0deg, 0deg) scale(1); }
             25% { transform: rotate(15deg) skew(-10deg, 6deg) scale(1.15, 0.85); }
@@ -142,47 +153,110 @@
         .element-24 { transform: rotate(331.2deg); --base-scale: 0.88; }
         .element-25 { transform: rotate(345.6deg); --base-scale: 0.90; }
 
-        /* Belső kör 3 eleme (szintén kapnak egyedi méretezést az organikus hatáshoz) */
         .inner-element-1 { transform: rotate(0deg); --base-scale: 0.85; }
         .inner-element-2 { transform: rotate(120deg); --base-scale: 0.95; }
         .inner-element-3 { transform: rotate(240deg); --base-scale: 0.90; }
+
+        /* --- ÚJ POPUP STÍLUSOK --- */
+        .info-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 45vmin; 
+            height: 45vmin;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 100;
+            pointer-events: none; 
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            background: radial-gradient(circle, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0) 75%);
+            /* Ellenforgás, hogy a popup vízszintes maradjon, miközben a .canvas forog */
+            animation: popup-counter-spin 120s linear infinite;
+        }
+
+        /* Ellenforgás animáció */
+        @keyframes popup-counter-spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        .canvas:has(.trigger-popup:hover) .info-popup {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-title {
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            font-size: 2.2vmin;
+            color: #000;
+            line-height: 1.2;
+            margin-bottom: 0.5vmin;
+        }
+
+        .popup-subtitle {
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            font-size: 1.5vmin;
+            color: #444;
+            margin-bottom: 2vmin;
+        }
+
+        .popup-image {
+            max-width: 60%;
+            max-height: 50%;
+            object-fit: contain;
+        }
     </style>
 </head>
 <body>
+    <div class="base-circle"></div>
+
     <div class="canvas">
-        <!-- 25 virág, vegyes forrásfájlokkal -->
         <div class="element-wrapper element-1"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-2 background"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-2 background trigger-popup"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-3"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
         <div class="element-wrapper element-4 background"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
         <div class="element-wrapper element-5"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-6 background"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-7 extra-small"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-8 background"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-8 background trigger-popup"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-9"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
         <div class="element-wrapper element-10 background"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
         <div class="element-wrapper element-11"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-12 background"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-13"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-14 background"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-14 background trigger-popup"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-15 extra-small"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-16"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
-        <div class="element-wrapper element-17"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-17 double-size"><div class="svg-container"><div class="wave-wrapper"><img src="78837(2)_vektor_04.svg"></div></div></div>
         <div class="element-wrapper element-18"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-19"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-20"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-20 trigger-popup"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-21"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
         <div class="element-wrapper element-22"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
         <div class="element-wrapper element-23 extra-small"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-24"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-25"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
+
+        <!-- Információs Popup -->
+        <div class="info-popup">
+            <div class="popup-title">Kaszakő tartó tok<br>tulipános díszítménye</div>
+            <div class="popup-subtitle">1890-1900, Kalotaszeg</div>
+            <!-- ".png" kiterjesztés -->
+            <img class="popup-image" src="127807_A_kep.png" alt="Tulipános díszítmény">
+        </div>
     </div>
 
-    <!-- Belső kör -->
+    <!-- Belső kör (-1-es indexszel) -->
     <div class="inner-canvas">
-        <!-- 3 egyforma vektor, 120 fokonként elforgatva -->
-        <div class="element-wrapper inner-element-1"><div class="svg-container"><div class="wave-wrapper"><img src="60_75_104_C_vektor_01_k.svg" alt="Belső virág 1"></div></div></div>
-        <div class="element-wrapper inner-element-2"><div class="svg-container"><div class="wave-wrapper"><img src="60_75_104_C_vektor_01_k.svg" alt="Belső virág 2"></div></div></div>
+        <div class="element-wrapper inner-element-1 inner-small"><div class="svg-container"><div class="wave-wrapper"><img src="59_109_30_2_vektor_03.svg" alt="Belső virág 1"></div></div></div>
+        <div class="element-wrapper inner-element-2"><div class="svg-container"><div class="wave-wrapper"><img src="51_23_56_A_vektor_01.svg" alt="Belső virág 2"></div></div></div>
         <div class="element-wrapper inner-element-3"><div class="svg-container"><div class="wave-wrapper"><img src="60_75_104_C_vektor_01_k.svg" alt="Belső virág 3"></div></div></div>
     </div>
 </body>
