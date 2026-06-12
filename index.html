@@ -70,10 +70,10 @@
             pointer-events: auto; 
         }
 
-        .element-wrapper.extra-small { --size-factor: 0.9; }
+        .element-wrapper.size-plus-35 { --size-factor: 1.35; } /* Régi extra-small lecserélve 35%-os növelésre */
         .element-wrapper.double-size { --size-factor: 2; }
         .element-wrapper.inner-small { --size-factor: 0.8; }
-        .element-wrapper.size-plus-15 { --size-factor: 1.15; }
+        .element-wrapper.size-plus-20 { --size-factor: 1.20; } /* 15% helyett most már 20%-kal nagyobb alapméret */
         .element-wrapper.background { z-index: -1; }
 
         .element-wrapper[class*="trigger-popup-"] {
@@ -129,6 +129,21 @@
             transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.22));
             filter: drop-shadow(0 0 35px rgba(255, 255, 255, 1));
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s, filter 0.4s ease 0s;
+        }
+
+        /* ÚJ: Extra 10% hover nagyítás a kijelölt virágoknak (popup nélküliek) */
+        .element-wrapper.extra-hover:hover .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.22));
+        }
+
+        /* ÚJ: Extra 10% hover nagyítás a kijelölt virágoknak (popupos változat) */
+        .element-wrapper[class*="trigger-popup-"].extra-hover:hover .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.32));
+        }
+
+        /* ÚJ: Extra 20% hover nagyítás a mostanin felül (kifejezetten a 9259_B_vektor_01_.svg-hez) */
+        .element-wrapper[class*="trigger-popup-"].extra-hover-20:hover .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.42));
         }
 
         body:has([class*="trigger-popup-"]:hover) .element-wrapper:not(:hover) .svg-container img {
@@ -211,7 +226,9 @@
         .canvas:has(.trigger-popup-A:hover) .info-popup-A,
         .canvas:has(.trigger-popup-B:hover) .info-popup-B,
         .canvas:has(.trigger-popup-C:hover) .info-popup-C,
-        .canvas:has(.trigger-popup-D:hover) .info-popup-D {
+        .canvas:has(.trigger-popup-D:hover) .info-popup-D,
+        .canvas:has(.trigger-popup-E:hover) .info-popup-E,
+        .canvas:has(.trigger-popup-F:hover) .info-popup-F {
             opacity: 1;
             visibility: visible;
             z-index: 105;
@@ -247,30 +264,30 @@
     <div class="base-circle"></div>
 
     <div class="canvas">
-        <div class="element-wrapper element-1 trigger-popup-C size-plus-15"><div class="svg-container"><div class="wave-wrapper"><img src="9259_B_vektor_01_.svg"></div></div></div>
+        <div class="element-wrapper element-1 trigger-popup-C size-plus-20 extra-hover-20"><div class="svg-container"><div class="wave-wrapper"><img src="9259_B_vektor_01_.svg"></div></div></div>
         <div class="element-wrapper element-2 background trigger-popup-A"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-3"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
-        <div class="element-wrapper element-4 background trigger-popup-B"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
+        <div class="element-wrapper element-4 background trigger-popup-B extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
         <div class="element-wrapper element-5 trigger-popup-D"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-6 background"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-7 extra-small"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-6 background trigger-popup-E extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-7 size-plus-35"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-8"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-9 background"><div class="svg-container"><div class="wave-wrapper"><img src="51_14_1491_a_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-9 background trigger-popup-F extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="51_14_1491_a_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-10 trigger-popup-A"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-11 background trigger-popup-B"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
-        <div class="element-wrapper element-12 background"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-11 background trigger-popup-B extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
+        <div class="element-wrapper element-12 background trigger-popup-E extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-13"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
         <div class="element-wrapper element-14"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-15 extra-small"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-16 double-size"><div class="svg-container"><div class="wave-wrapper"><img src="78837(2)_vektor_04.svg"></div></div></div>
-        <div class="element-wrapper element-17 trigger-popup-B"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
+        <div class="element-wrapper element-15 size-plus-35"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-16 double-size extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="78837(2)_vektor_04.svg"></div></div></div>
+        <div class="element-wrapper element-17 trigger-popup-B extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
         <div class="element-wrapper element-18 background trigger-popup-A"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-19"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-19 trigger-popup-E extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-20 trigger-popup-D"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
         <div class="element-wrapper element-21 background"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
-        <div class="element-wrapper element-22 extra-small"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-23 trigger-popup-B"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
-        <div class="element-wrapper element-24"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-22 size-plus-35"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
+        <div class="element-wrapper element-23 trigger-popup-B extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
+        <div class="element-wrapper element-24 trigger-popup-E extra-hover"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
 
         <div class="info-popup info-popup-A">
             <div class="popup-title">Kaszakő tartó tok<br>tulipános díszítménye</div>
@@ -295,12 +312,18 @@
             <div class="popup-subtitle">1848, Homoródalmás</div>
             <img class="popup-image" src="139337.png" alt="Téka virágfüzéres festése">
         </div>
-    </div>
 
-    <div class="inner-canvas">
-        <div class="element-wrapper inner-element-1 inner-small"><div class="svg-container"><div class="wave-wrapper"><img src="59_109_30_2_vektor_03.svg" alt="Belső virág 1"></div></div></div>
-        <div class="element-wrapper inner-element-2"><div class="svg-container"><div class="wave-wrapper"><img src="51_23_56_A_vektor_01.svg" alt="Belső virág 2"></div></div></div>
-        <div class="element-wrapper inner-element-3"><div class="svg-container"><div class="wave-wrapper"><img src="60_75_104_C_vektor_01_k.svg" alt="Belső virág 3"></div></div></div>
+        <div class="info-popup info-popup-E">
+            <div class="popup-title">Nagy cserépkancsó<br>virágindás díszítménye</div>
+            <div class="popup-subtitle">1815, Maros megye, Románia</div>
+            <img class="popup-image" src="121863_A_kep.png" alt="Nagy cserépkancsó">
+        </div>
+
+        <div class="info-popup info-popup-F">
+            <div class="popup-title">Színes gyapjúfonallal hímzett<br>mintakendő eleme</div>
+            <div class="popup-subtitle">1873, Nyitra megye</div>
+            <img class="popup-image" src="51.14.1491_a_kep.png" alt="Mintakendő eleme">
+        </div>
     </div>
 </body>
 </html>
