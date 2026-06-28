@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -51,15 +51,25 @@
             transform-origin: bottom center;
             transition: z-index 0s 2s;
             --size-factor: 1;
+            /* idle-scale is modified by JS during inactivity */
+            --idle-scale: 0; 
             pointer-events: auto; 
         }
 
+        /* --- MÉRET OSZTÁLYOK --- */
         .element-wrapper.size-plus-35 { --size-factor: 1.35; }
         .element-wrapper.double-size { --size-factor: 2; }
+        .element-wrapper.size-plus-80 { --size-factor: 1.8; }
         .element-wrapper.size-minus-20 { --size-factor: 0.8; }
         .element-wrapper.size-minus-5 { --size-factor: 0.95; }
         .element-wrapper.size-plus-15 { --size-factor: 1.15; }
         .element-wrapper.size-plus-20 { --size-factor: 1.20; }
+        
+        /* Specifikus méretosztályok */
+        .element-wrapper.size-minus-30 { --size-factor: 0.70; } /* 15-ös hatalmas elemnek */
+        .element-wrapper.size-minus-40 { --size-factor: 0.70; } /* 15-ösnek frissítve +16%-ra */
+        .element-wrapper.size-minus-54 { --size-factor: 0.46; } /* 8-as pici főkötőnek */
+        
         .element-wrapper.background { z-index: -1; }
 
         .element-wrapper[class*="trigger-popup-"] {
@@ -95,14 +105,21 @@
             height: auto;
             display: block;
             transform-origin: bottom center;
-            transform: scale(calc(var(--base-scale) * var(--size-factor)));
+            /* Összeköti az alap méretet, a szorzót és az esetleges idle növekedést */
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) + var(--idle-scale)));
             transition: transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 2s ease;
+        }
+
+        /* Simább 1.5s átmenet, amikor megszakad az idle állapot (egérmozgásra) */
+        .element-wrapper.resetting-idle .svg-container img {
+            transition: transform 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .element-wrapper[class*="trigger-popup-"] .svg-container img {
             transition: transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s, filter 2s ease 0.5s;
         }
 
+        /* --- HOVER EFFEKTEK ÉS MÉRETEK --- */
         .element-wrapper:hover .svg-container img {
             transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.12));
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.8));
@@ -117,6 +134,10 @@
 
         .element-wrapper[class*="trigger-popup-"].hover-reduced:hover .svg-container img {
             transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.12));
+        }
+        
+        .element-wrapper[class*="trigger-popup-"].hover-reduced-15:hover .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.05)); /* Kisebb hover a főkötőnek */
         }
 
         .element-wrapper.extra-hover:hover .svg-container img {
@@ -146,26 +167,41 @@
         .element-wrapper.extra-hover-30:hover .svg-container img {
             transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.62));
         }
+        
+        .element-wrapper[class*="trigger-popup-"].extra-hover-40:hover .svg-container img,
+        .element-wrapper.extra-hover-40:hover .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) + 0.75));
+        }
 
+        /* --- SZOMSZÉDOK ZSUGORODÁSA (SZORZÁSSAL) --- */
+        /* Minden más elem a méretének 85%-ára megy össze */
         body:has(.element-wrapper:hover) .element-wrapper:not(:hover) .svg-container img {
-            transform: scale(calc((var(--base-scale) * var(--size-factor)) - 0.15));
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) * 0.85));
             transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s; 
         }
 
+        /* A 2 lépésre lévő szomszédok a méretük 65%-ára mennek össze */
         .canvas .element-wrapper:has(+ .element-wrapper + .element-wrapper:hover) .svg-container img,
         .canvas .element-wrapper:hover + .element-wrapper + .element-wrapper .svg-container img,
-        .canvas:has(.element-1:hover) .element-21 .svg-container img,
-        .canvas:has(.element-2:hover) .element-22 .svg-container img,
-        .canvas:has(.element-21:hover) .element-1 .svg-container img,
-        .canvas:has(.element-22:hover) .element-2 .svg-container img {
-            transform: scale(calc((var(--base-scale) * var(--size-factor)) - 0.30)) !important;
+        .canvas:has(.element-1:hover) .element-20 .svg-container img,
+        .canvas:has(.element-2:hover) .element-21 .svg-container img,
+        .canvas:has(.element-20:hover) .element-1 .svg-container img,
+        .canvas:has(.element-21:hover) .element-2 .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) * 0.65)) !important;
         }
 
+        /* Közvetlen (1 lépésre lévő) szomszédok a méretük 40%-ára mennek össze (korábban 35% volt) */
         .canvas .element-wrapper:has(+ .element-wrapper:hover) .svg-container img,
         .canvas .element-wrapper:hover + .element-wrapper .svg-container img,
-        .canvas:has(.element-1:hover) .element-22 .svg-container img,
-        .canvas:has(.element-22:hover) .element-1 .svg-container img {
-            transform: scale(calc((var(--base-scale) * var(--size-factor)) - 0.45)) !important;
+        .canvas:has(.element-1:hover) .element-21 .svg-container img,
+        .canvas:has(.element-21:hover) .element-1 .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) * 0.40)) !important;
+        }
+
+        /* KIVÉTEL: A 15-ös elem (óriás virág), hogy ne legyen extrém kicsi, ha a 14-es vagy 16-os hover alatt van (40% helyett 55%) */
+        .canvas:has(.element-14:hover) .element-15 .svg-container img,
+        .canvas:has(.element-16:hover) .element-15 .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) * 0.55)) !important;
         }
 
         @keyframes bubble-gum-wave {
@@ -176,29 +212,30 @@
             100% { transform: rotate(0deg) skew(0deg, 0deg) scale(1); }
         }
 
+        /* 21 elem elosztása 360 fokon. A 3-as elem körül egyedi, nagyobb hely van. */
         .element-1 { transform: rotate(0deg); --base-scale: 0.75; }
         .element-2 { transform: rotate(16deg); --base-scale: 0.95; }
-        .element-3 { transform: rotate(36deg); --base-scale: 0.82; }
-        .element-4 { transform: rotate(56deg); --base-scale: 0.88; }
-        .element-5 { transform: rotate(72deg); --base-scale: 0.91; }
+        .element-3 { transform: rotate(35deg); --base-scale: 0.82; } /* Szélesebb hely */
+        .element-4 { transform: rotate(54deg); --base-scale: 0.88; }
+        .element-5 { transform: rotate(71deg); --base-scale: 0.91; }
         .element-6 { transform: rotate(88deg); --base-scale: 0.78; }
-        .element-7 { transform: rotate(104deg); --base-scale: 0.85; }
-        .element-8 { transform: rotate(120deg); --base-scale: 0.92; }
-        .element-9 { transform: rotate(136deg); --base-scale: 0.80; }
-        .element-10 { transform: rotate(152deg); --base-scale: 0.89; }
-        .element-11 { transform: rotate(168deg); --base-scale: 0.94; }
-        .element-12 { transform: rotate(184deg); --base-scale: 0.76; }
-        .element-13 { transform: rotate(200deg); --base-scale: 0.83; }
-        .element-14 { transform: rotate(216deg); --base-scale: 0.90; }
-        .element-15 { transform: rotate(232deg); --base-scale: 0.93; }
-        .element-16 { transform: rotate(248deg); --base-scale: 0.79; }
-        .element-17 { transform: rotate(264deg); --base-scale: 0.86; }
-        .element-18 { transform: rotate(280deg); --base-scale: 0.91; }
-        .element-19 { transform: rotate(296deg); --base-scale: 0.84; }
-        .element-20 { transform: rotate(312deg); --base-scale: 0.77; }
-        .element-21 { transform: rotate(328deg); --base-scale: 0.96; }
-        .element-22 { transform: rotate(344deg); --base-scale: 0.81; }
+        .element-7 { transform: rotate(105deg); --base-scale: 0.85; }
+        .element-8 { transform: rotate(122deg); --base-scale: 0.92; }
+        .element-9 { transform: rotate(139deg); --base-scale: 0.80; }
+        .element-10 { transform: rotate(156deg); --base-scale: 0.89; }
+        .element-11 { transform: rotate(173deg); --base-scale: 0.94; }
+        .element-12 { transform: rotate(190deg); --base-scale: 0.76; }
+        .element-13 { transform: rotate(207deg); --base-scale: 0.83; }
+        .element-14 { transform: rotate(224deg); --base-scale: 0.90; }
+        .element-15 { transform: rotate(241deg); --base-scale: 0.93; }
+        .element-16 { transform: rotate(258deg); --base-scale: 0.79; }
+        .element-17 { transform: rotate(275deg); --base-scale: 0.86; }
+        .element-18 { transform: rotate(292deg); --base-scale: 0.91; }
+        .element-19 { transform: rotate(309deg); --base-scale: 0.84; }
+        .element-20 { transform: rotate(326deg); --base-scale: 0.77; }
+        .element-21 { transform: rotate(343deg); --base-scale: 0.96; }
 
+        /* --- POPUP STÍLUSOK --- */
         .info-popup {
             position: absolute;
             top: 50%;
@@ -228,6 +265,7 @@
             transition: opacity 0.4s ease-in-out 0s, visibility 0s linear 0.4s;
         }
 
+        /* popup hozzáadva (A-tól M-ig) */
         .canvas:has(.trigger-popup-A:hover) .info-popup-A,
         .canvas:has(.trigger-popup-B:hover) .info-popup-B,
         .canvas:has(.trigger-popup-C:hover) .info-popup-C,
@@ -237,7 +275,12 @@
         .canvas:has(.trigger-popup-G:hover) .info-popup-G,
         .canvas:has(.trigger-popup-H:hover) .info-popup-H,
         .canvas:has(.trigger-popup-I:hover) .info-popup-I,
-        .canvas:has(.trigger-popup-J:hover) .info-popup-J {
+        .canvas:has(.trigger-popup-J:hover) .info-popup-J,
+        .canvas:has(.trigger-popup-K:hover) .info-popup-K,
+        .canvas:has(.trigger-popup-L:hover) .info-popup-L,
+        .canvas:has(.trigger-popup-M:hover) .info-popup-M,
+        .canvas:has(.trigger-popup-N:hover) .info-popup-N,
+        .canvas:has(.trigger-popup-O:hover) .info-popup-O {
             opacity: 1;
             visibility: visible;
             z-index: 105;
@@ -267,94 +310,258 @@
             max-width: 80%;
             object-fit: contain;
         }
+
+        /* Letöltés gomb stílusa */
+        #download-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            padding: 12px 24px;
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        #download-btn:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.4);
+        }
     </style>
 </head>
 <body>
+    <button id="download-btn">HTML Letöltése</button>
     <div class="base-circle"></div>
 
     <div class="canvas">
-        <div class="element-wrapper element-1 trigger-popup-C size-plus-20 extra-hover-28"><div class="svg-container"><div class="wave-wrapper"><img src="9259_B_vektor_01_.svg"></div></div></div>
-        <div class="element-wrapper element-2 background trigger-popup-A"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-3 double-size extra-hover trigger-popup-J"><div class="svg-container"><div class="wave-wrapper"><img src="2019.34.20_A_vektor_03_v.svg"></div></div></div>
-        <div class="element-wrapper element-4 background trigger-popup-B extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
-        <div class="element-wrapper element-5 trigger-popup-D hover-reduced size-minus-5"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-6 background trigger-popup-E size-plus-15 extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-7 size-plus-35 trigger-popup-G extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-8"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-9 background trigger-popup-F extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="51_14_1491_a_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-10 trigger-popup-A"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-11"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
-        <div class="element-wrapper element-12 background trigger-popup-E size-plus-15 extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-13 background trigger-popup-I size-minus-20"><div class="svg-container"><div class="wave-wrapper"><img src="60.75.11.b_vektor_07.svg"></div></div></div>
-        <div class="element-wrapper element-14"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-15 double-size trigger-popup-H extra-hover-30"><div class="svg-container"><div class="wave-wrapper"><img src="78837(2)_vektor_04.svg"></div></div></div>
-        <div class="element-wrapper element-16 trigger-popup-B extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
-        <div class="element-wrapper element-17 background trigger-popup-A"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-18 trigger-popup-E size-plus-15 extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-19 trigger-popup-D hover-reduced size-minus-5"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-20 background"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg"></div></div></div>
-        <div class="element-wrapper element-21 size-plus-35 trigger-popup-G extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg"></div></div></div>
-        <div class="element-wrapper element-22 trigger-popup-B extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg"></div></div></div>
+        <!-- 21 SVG Elem -->
+        <div class="element-wrapper element-1 trigger-popup-C size-plus-20 extra-hover-28"><div class="svg-container"><div class="wave-wrapper"><img src="9259_B_vektor_01_.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=1'"></div></div></div>
+        <div class="element-wrapper element-2 background trigger-popup-A"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=2'"></div></div></div>
+        <div class="element-wrapper element-3 size-plus-80 extra-hover trigger-popup-J"><div class="svg-container"><div class="wave-wrapper"><img src="2019.34.20_A_vektor_03_v.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=3'"></div></div></div>
+        <div class="element-wrapper element-4 background trigger-popup-B extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=4'"></div></div></div>
+        <div class="element-wrapper element-5 trigger-popup-D hover-reduced size-minus-5"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=5'"></div></div></div>
+        <div class="element-wrapper element-6 background trigger-popup-E size-plus-15 extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=6'"></div></div></div>
+        <div class="element-wrapper element-7 size-plus-35 trigger-popup-G extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=7'"></div></div></div>
+        
+        <!-- Pici muszlin főkötő motívuma (csökkentett -54% alap és kisebb hover) -->
+        <div class="element-wrapper element-8 trigger-popup-K size-minus-54 hover-reduced-15"><div class="svg-container"><div class="wave-wrapper"><img src="59.109.30(2)_vektor_02.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=8'"></div></div></div>
+        
+        <div class="element-wrapper element-9 background trigger-popup-F extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="51_14_1491_a_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=9'"></div></div></div>
+        
+        <!-- Cserélt új hímzett ködmön elem az új M popuppal -->
+        <div class="element-wrapper element-10 trigger-popup-M"><div class="svg-container"><div class="wave-wrapper"><img src="54.43.1_H_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=10'"></div></div></div>
+        
+        <div class="element-wrapper element-11 trigger-popup-O"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=11'"></div></div></div>
+        <div class="element-wrapper element-12 background trigger-popup-E size-plus-15 extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=12'"></div></div></div>
+        <div class="element-wrapper element-13 background trigger-popup-I size-minus-20"><div class="svg-container"><div class="wave-wrapper"><img src="60.75.11.b_vektor_07.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=13'"></div></div></div>
+        
+        <!-- Eredeti 14-es virág -->
+        <div class="element-wrapper element-14"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=14'"></div></div></div>
+        
+        <!-- Hatalmas virág kicsinyítve (-40% alapra frissítve), nagy extra hoverrel -->
+        <div class="element-wrapper element-15 trigger-popup-H size-minus-40 extra-hover-40"><div class="svg-container"><div class="wave-wrapper"><img src="78837(2)_vektor_04.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=15'"></div></div></div>
+        
+        <!-- Bőrmellény minta (+15% alap, +28% hover extra, L popup) -->
+        <div class="element-wrapper element-16 trigger-popup-L size-plus-15 extra-hover-28"><div class="svg-container"><div class="wave-wrapper"><img src="122845_vektor_02_retus.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=16'"></div></div></div>
+        
+        <div class="element-wrapper element-17 background trigger-popup-A"><div class="svg-container"><div class="wave-wrapper"><img src="127807_A_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=17'"></div></div></div>
+        <div class="element-wrapper element-18 trigger-popup-E size-plus-15 extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=18'"></div></div></div>
+        <div class="element-wrapper element-19 trigger-popup-D hover-reduced size-minus-5"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=19'"></div></div></div>
+        <div class="element-wrapper element-20 background trigger-popup-N"><div class="svg-container"><div class="wave-wrapper"><img src="21625_vektor_02.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=20'"></div></div></div>
+        <div class="element-wrapper element-21 size-plus-35 trigger-popup-G extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=21'"></div></div></div>
 
+        <!-- INFO POPUPOK -->
         <div class="info-popup info-popup-A">
             <div class="popup-title">Kaszakő tartó tok<br>tulipános díszítménye</div>
             <div class="popup-subtitle">1890-1900, Kalotaszeg</div>
-            <img class="popup-image" src="127807_A_kep.png" alt="Tulipános díszítmény">
+            <img class="popup-image" src="127807_A_kep.png" alt="Tulipános díszítmény" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
-
         <div class="info-popup info-popup-B">
             <div class="popup-title">Ónmázas cserépkanta<br>virágszálas festett díszítése</div>
             <div class="popup-subtitle">1700, Győr</div>
-            <img class="popup-image" src="101912_B_kep.png" alt="Cserépkanta díszítése">
+            <img class="popup-image" src="101912_B_kep.png" alt="Cserépkanta díszítése" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
-
         <div class="info-popup info-popup-C">
             <div class="popup-title">Ónmázas cserépkorsó<br>rószakompozícióval</div>
             <div class="popup-subtitle">1801-1850, Vyškov, Csehország</div>
-            <img class="popup-image" src="9259_B_kep.png" alt="Cserépkorsó rószakompozícióval">
+            <img class="popup-image" src="9259_B_kep.png" alt="Cserépkorsó rószakompozícióval" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
-
         <div class="info-popup info-popup-D">
             <div class="popup-title">Téka virágfüzéres<br>festése</div>
             <div class="popup-subtitle">1848, Homoródalmás</div>
-            <img class="popup-image" src="139337.png" alt="Téka virágfüzéres festése">
+            <img class="popup-image" src="139337.png" alt="Téka virágfüzéres festése" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
-
         <div class="info-popup info-popup-E">
             <div class="popup-title">Nagy cserépkancsó<br>virágindás díszítménye</div>
             <div class="popup-subtitle">1815, Maros megye, Románia</div>
-            <img class="popup-image" src="121863_A_kep.png" alt="Nagy cserépkancsó">
+            <img class="popup-image" src="121863_A_kep.png" alt="Nagy cserépkancsó" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
-
         <div class="info-popup info-popup-F">
             <div class="popup-title">Színes gyapjúfonallal hímzett<br>mintakendő eleme</div>
             <div class="popup-subtitle">1873, Nyitra megye</div>
-            <img class="popup-image" src="51.14.1491_a_kep.png" alt="Mintakendő eleme">
+            <img class="popup-image" src="51.14.1491_a_kep.png" alt="Mintakendő eleme" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
-
         <div class="info-popup info-popup-G">
             <div class="popup-title">Agyag cseréptál<br>margaréta és tulipán díszítménnyel</div>
             <div class="popup-subtitle">19. század második fele, Sárköz</div>
-            <img class="popup-image" src="121805_kep.png" alt="Agyag cseréptál">
+            <img class="popup-image" src="121805_kep.png" alt="Agyag cseréptál" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
-
         <div class="info-popup info-popup-H">
             <div class="popup-title">Miskakancsó<br>búzakalászos díszítése</div>
             <div class="popup-subtitle">1852, Tiszafüred</div>
-            <img class="popup-image" src="78837_kep.png" alt="Miskakancsó">
+            <img class="popup-image" src="78837_kep.png" alt="Miskakancsó" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
-
         <div class="info-popup info-popup-I">
             <div class="popup-title">Festett ládáról származó<br>tulipán mintaelem</div>
             <div class="popup-subtitle">1850-1900, Bánffyhunyad</div>
-            <img class="popup-image" src="60.75.11.b_kep.png" alt="Tulipán mintaelem">
+            <img class="popup-image" src="60.75.11.b_kep.png" alt="Tulipán mintaelem" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
-
         <div class="info-popup info-popup-J">
             <div class="popup-title">Gyolcs terítő<br>hímzett virágmintája</div>
             <div class="popup-subtitle">1955, Szakmár</div>
-            <img class="popup-image" src="2019.34.20_A_kep.png" alt="Gyolcs terítő">
+            <img class="popup-image" src="2019.34.20_A_kep.png" alt="Gyolcs terítő" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
+        </div>
+        <div class="info-popup info-popup-K">
+            <div class="popup-title">Kézzel szegett, muszlin főkötő<br>tulipán motívuma</div>
+            <div class="popup-subtitle">19. század második fele, Sárköz</div>
+            <img class="popup-image" src="59.109.30(2) copy.png" alt="Muszlin főkötő" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
+        </div>
+        <div class="info-popup info-popup-L">
+            <div class="popup-title">Bőrmellény hímzett mintája<br>növénymotívumokkal</div>
+            <div class="popup-subtitle">19. század, Felvidék</div>
+            <img class="popup-image" src="122845_retus.png" alt="Bőrmellény hímzett mintája" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
+        </div>
+        <div class="info-popup info-popup-M">
+            <div class="popup-title">Juh szőrös bőréből készült<br>hímzett ködmön</div>
+            <div class="popup-subtitle">1894, Átány</div>
+            <img class="popup-image" src="54.43.1_H.JPG" alt="Hímzett ködmön" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
+        </div>
+        <div class="info-popup info-popup-N">
+            <div class="popup-title">Keménycserép tányér<br>festett növényi motívumokkal</div>
+            <div class="popup-subtitle">1890-1900, Nagyjécsa</div>
+            <img class="popup-image" src="21625_.png" alt="Keménycserép tányér" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
+        </div>
+        <div class="info-popup info-popup-O">
+            <div class="popup-title">Kalocsai hímzéssel<br>díszített blúz virágokkal</div>
+            <div class="popup-subtitle">1980-1985, Besenyőtelek</div>
+            <img class="popup-image" src="85.99.1_b.png" alt="Kalocsai hímzéssel" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
     </div>
+
+    <!-- JAVASCRIPT: Idle animáció (növekedés) és Letöltés gomb -->
+    <script>
+        // --- ÉLŐ KERT ANIMÁCIÓ LOGIKA ---
+        const IDLE_TIMEOUT = 20000; // 20 másodperc szünet
+        const GROWTH_INTERVAL = 3000; // 3 másodpercenként lép
+        const MAX_GROWTH = 0.20; // 20% max növekedés
+        const GROWTH_STEP = 0.04; // 4% ugrás lépésenként
+        
+        let idleTimer;
+        let growthIntervalTimer;
+        let currentGrowth = 0;
+        let selectedElements = [];
+        
+        // Segédfüggvény: kiválaszt X db nem szomszédos elemet
+        function getNonAdjacentIndices(count, total) {
+            let indices = [];
+            let attempts = 0;
+            while(indices.length < count && attempts < 100) {
+                attempts++;
+                let rand = Math.floor(Math.random() * total) + 1; // 1-től 21-ig
+                
+                // Szomszédosság ellenőrzése (körbeéréssel is)
+                let isAdjacent = false;
+                for(let i of indices) {
+                    if (Math.abs(i - rand) === 1 || (i === 1 && rand === total) || (i === total && rand === 1) || i === rand) {
+                        isAdjacent = true;
+                        break;
+                    }
+                }
+                
+                if(!isAdjacent) {
+                    indices.push(rand);
+                }
+            }
+            return indices;
+        }
+
+        // Visszaállás alapállapotba (egérmozgásra hívódik meg)
+        function resetIdleState() {
+            clearTimeout(idleTimer);
+            clearInterval(growthIntervalTimer);
+            
+            if (currentGrowth > 0) {
+                // Kicsinyítés animációval
+                selectedElements.forEach(el => {
+                    el.classList.add('resetting-idle');
+                    el.style.setProperty('--idle-scale', 0);
+                    
+                    // Osztály eltávolítása, ha lejárt az 1.5s ease átmenet
+                    setTimeout(() => {
+                        el.classList.remove('resetting-idle');
+                    }, 1500);
+                });
+            }
+            
+            currentGrowth = 0;
+            selectedElements = [];
+            
+            // Újraindul a 20 másodperces visszaszámlálás
+            idleTimer = setTimeout(startIdleGrowth, IDLE_TIMEOUT);
+        }
+
+        // Növekedés elindítása (ha letelik a 20mp)
+        function startIdleGrowth() {
+            // Kiválaszt 7 nem szomszédos elemet a 21-ből (kb 1/3-ot)
+            let indices = getNonAdjacentIndices(7, 21);
+            selectedElements = indices.map(i => document.querySelector(`.element-${i}`));
+            currentGrowth = 0;
+            
+            // Növekedési ciklus (3 másodpercenként)
+            growthIntervalTimer = setInterval(() => {
+                if (currentGrowth >= MAX_GROWTH) {
+                    clearInterval(growthIntervalTimer);
+                    return; // Megáll 20%-nál
+                }
+                
+                currentGrowth += GROWTH_STEP; // +4% hozzáadása
+                
+                selectedElements.forEach(el => {
+                    if(el) {
+                        el.style.setProperty('--idle-scale', currentGrowth);
+                    }
+                });
+                
+            }, GROWTH_INTERVAL);
+        }
+
+        // Figyeljük az egeret és érintést
+        ['mousemove', 'mousedown', 'touchstart', 'scroll', 'keydown'].forEach(evt => 
+            window.addEventListener(evt, resetIdleState, { passive: true })
+        );
+
+        // Első indítás
+        idleTimer = setTimeout(startIdleGrowth, IDLE_TIMEOUT);
+
+        // --- LETÖLTÉS GOMB LOGIKA ---
+        const downloadBtn = document.getElementById('download-btn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                const htmlContent = document.documentElement.outerHTML;
+                const blob = new Blob([htmlContent], {type: 'text/html'});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'Radial_Composition.html';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            });
+        }
+    </script>
 </body>
 </html>
