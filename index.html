@@ -58,6 +58,7 @@
 
         /* --- MÉRET OSZTÁLYOK --- */
         .element-wrapper.size-plus-35 { --size-factor: 1.35; }
+        .element-wrapper.size-plus-88 { --size-factor: 1.88; } /* 7-es elem növelt alapmérete */
         .element-wrapper.double-size { --size-factor: 2; }
         .element-wrapper.size-plus-80 { --size-factor: 1.8; }
         .element-wrapper.size-minus-20 { --size-factor: 0.8; }
@@ -66,8 +67,9 @@
         .element-wrapper.size-plus-20 { --size-factor: 1.20; }
         
         /* Specifikus méretosztályok */
-        .element-wrapper.size-minus-30 { --size-factor: 0.70; } /* 15-ös hatalmas elemnek */
-        .element-wrapper.size-minus-40 { --size-factor: 0.70; } /* 15-ösnek frissítve +16%-ra */
+        .element-wrapper.size-minus-30 { --size-factor: 0.70; } 
+        .element-wrapper.size-minus-25 { --size-factor: 0.75; } /* 15-ös megnövelt alapmérete */
+        .element-wrapper.size-minus-40 { --size-factor: 0.70; } 
         .element-wrapper.size-minus-54 { --size-factor: 0.46; } /* 8-as pici főkötőnek */
         
         .element-wrapper.background { z-index: -1; }
@@ -204,6 +206,16 @@
             transform: scale(calc((var(--base-scale) * var(--size-factor)) * 0.55)) !important;
         }
 
+        /* KIVÉTEL: A 7-es elem (hímzett suba) zsugorodása, hogy az óriási növelés ellenére is kb +24%-os maradjon az eddigi zsugorodott méretéhez képest */
+        .canvas:has(.element-6:hover) .element-7 .svg-container img,
+        .canvas:has(.element-8:hover) .element-7 .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) * 0.36)) !important;
+        }
+        .canvas:has(.element-5:hover) .element-7 .svg-container img,
+        .canvas:has(.element-9:hover) .element-7 .svg-container img {
+            transform: scale(calc((var(--base-scale) * var(--size-factor)) * 0.58)) !important;
+        }
+
         @keyframes bubble-gum-wave {
             0% { transform: rotate(0deg) skew(0deg, 0deg) scale(1); }
             25% { transform: rotate(15deg) skew(-10deg, 6deg) scale(1.15, 0.85); }
@@ -265,7 +277,7 @@
             transition: opacity 0.4s ease-in-out 0s, visibility 0s linear 0.4s;
         }
 
-        /* popup hozzáadva (A-tól M-ig) */
+        /* popup hozzáadva (A-tól P-ig) */
         .canvas:has(.trigger-popup-A:hover) .info-popup-A,
         .canvas:has(.trigger-popup-B:hover) .info-popup-B,
         .canvas:has(.trigger-popup-C:hover) .info-popup-C,
@@ -280,7 +292,8 @@
         .canvas:has(.trigger-popup-L:hover) .info-popup-L,
         .canvas:has(.trigger-popup-M:hover) .info-popup-M,
         .canvas:has(.trigger-popup-N:hover) .info-popup-N,
-        .canvas:has(.trigger-popup-O:hover) .info-popup-O {
+        .canvas:has(.trigger-popup-O:hover) .info-popup-O,
+        .canvas:has(.trigger-popup-P:hover) .info-popup-P {
             opacity: 1;
             visibility: visible;
             z-index: 105;
@@ -347,14 +360,16 @@
         <div class="element-wrapper element-4 background trigger-popup-B extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="101912_B_vektor_02.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=4'"></div></div></div>
         <div class="element-wrapper element-5 trigger-popup-D hover-reduced size-minus-5"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=5'"></div></div></div>
         <div class="element-wrapper element-6 background trigger-popup-E size-plus-15 extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=6'"></div></div></div>
-        <div class="element-wrapper element-7 size-plus-35 trigger-popup-G extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=7'"></div></div></div>
         
-        <!-- Pici muszlin főkötő motívuma (csökkentett -54% alap és kisebb hover) -->
+        <!-- 7-es elem: Hímzett suba, megnövelt alappal és egyedi zsugorodással -->
+        <div class="element-wrapper element-7 size-plus-88 trigger-popup-P extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="77014_B.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=7'"></div></div></div>
+        
+        <!-- 8-as pici főkötő motívuma -->
         <div class="element-wrapper element-8 trigger-popup-K size-minus-54 hover-reduced-15"><div class="svg-container"><div class="wave-wrapper"><img src="59.109.30(2)_vektor_02.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=8'"></div></div></div>
         
         <div class="element-wrapper element-9 background trigger-popup-F extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="51_14_1491_a_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=9'"></div></div></div>
         
-        <!-- Cserélt új hímzett ködmön elem az új M popuppal -->
+        <!-- 10-es elem (hímzett ködmön) -->
         <div class="element-wrapper element-10 trigger-popup-M"><div class="svg-container"><div class="wave-wrapper"><img src="54.43.1_H_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=10'"></div></div></div>
         
         <div class="element-wrapper element-11 trigger-popup-O"><div class="svg-container"><div class="wave-wrapper"><img src="85_99_1_b_vektor_04_fekete.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=11'"></div></div></div>
@@ -364,8 +379,8 @@
         <!-- Eredeti 14-es virág -->
         <div class="element-wrapper element-14"><div class="svg-container"><div class="wave-wrapper"><img src="139337i_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=14'"></div></div></div>
         
-        <!-- Hatalmas virág kicsinyítve (-40% alapra frissítve), nagy extra hoverrel -->
-        <div class="element-wrapper element-15 trigger-popup-H size-minus-40 extra-hover-40"><div class="svg-container"><div class="wave-wrapper"><img src="78837(2)_vektor_04.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=15'"></div></div></div>
+        <!-- 15-ös Hatalmas virág (kicsinyítve -25% alapra, a korábbi -40% helyett), nagy extra hoverrel -->
+        <div class="element-wrapper element-15 trigger-popup-H size-minus-25 extra-hover-40"><div class="svg-container"><div class="wave-wrapper"><img src="78837(2)_vektor_04.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=15'"></div></div></div>
         
         <!-- Bőrmellény minta (+15% alap, +28% hover extra, L popup) -->
         <div class="element-wrapper element-16 trigger-popup-L size-plus-15 extra-hover-28"><div class="svg-container"><div class="wave-wrapper"><img src="122845_vektor_02_retus.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=16'"></div></div></div>
@@ -374,6 +389,8 @@
         <div class="element-wrapper element-18 trigger-popup-E size-plus-15 extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121863_A_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=18'"></div></div></div>
         <div class="element-wrapper element-19 trigger-popup-D hover-reduced size-minus-5"><div class="svg-container"><div class="wave-wrapper"><img src="139337_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=19'"></div></div></div>
         <div class="element-wrapper element-20 background trigger-popup-N"><div class="svg-container"><div class="wave-wrapper"><img src="21625_vektor_02.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=20'"></div></div></div>
+        
+        <!-- 21-es Margarétás cseréptál -->
         <div class="element-wrapper element-21 size-plus-35 trigger-popup-G extra-hover-15"><div class="svg-container"><div class="wave-wrapper"><img src="121805_vektor_01.svg" onerror="this.src='https://placehold.co/100x100/FF5733/FFFFFF?text=21'"></div></div></div>
 
         <!-- INFO POPUPOK -->
@@ -433,7 +450,7 @@
             <img class="popup-image" src="59.109.30(2) copy.png" alt="Muszlin főkötő" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
         <div class="info-popup info-popup-L">
-            <div class="popup-title">Bőrmellény hímzett mintája<br>növénymotívumokkal</div>
+            <div class="popup-title">Növénymotívumokkal hímzett<br>bőrmellény</div>
             <div class="popup-subtitle">19. század, Felvidék</div>
             <img class="popup-image" src="122845_retus.png" alt="Bőrmellény hímzett mintája" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
@@ -451,6 +468,11 @@
             <div class="popup-title">Kalocsai hímzéssel<br>díszített blúz virágokkal</div>
             <div class="popup-subtitle">1980-1985, Besenyőtelek</div>
             <img class="popup-image" src="85.99.1_b.png" alt="Kalocsai hímzéssel" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
+        </div>
+        <div class="info-popup info-popup-P">
+            <div class="popup-title">Hímzett suba<br>makkvirág díszítéssel</div>
+            <div class="popup-subtitle">19. század, Kiskunmajsa</div>
+            <img class="popup-image" src="77014_B_r.jpg" alt="Hímzett suba" onerror="this.src='https://placehold.co/200x200/cccccc/ffffff?text=Image'">
         </div>
     </div>
 
